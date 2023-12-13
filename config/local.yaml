@@ -1,0 +1,6 @@
+env: "local"
+mongo_uri: "mongodb+srv://grpctest:3CKFmgoCI3KHgfny@grpc.tnt94ek.mongodb.net/?retryWrites=true&w=majority"
+token_ttl: 1h
+grpc:
+  port: 44444
+  timeout: 10h
