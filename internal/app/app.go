@@ -7,11 +7,11 @@ import (
 )
 
 type App struct {
-	gRPCServer *grpcapp.App
+	GRPCServer *grpcapp.App
 }
 
 func New(log *slog.Logger, grpcPort int, DBURI string, TokenTTL time.Duration) *App {
 	grpcApp := grpcapp.New(log, grpcPort)
 
-	return &App{gRPCServer: grpcApp}
+	return &App{GRPCServer: grpcApp}
 }

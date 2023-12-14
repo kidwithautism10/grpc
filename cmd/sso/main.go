@@ -1,9 +1,12 @@
 package main
 
 import (
+	"grpc/internal/app"
 	"grpc/internal/config"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -14,8 +17,15 @@ const (
 func main() {
 	cfg := config.MustLoad()
 	log := setupLogger(cfg.Env)
+	application := app.New(log, cfg.GRPC.Port, cfg.MongoURI, cfg.TokenTTL)
 
-	log.Info("Server is start")
+	go application.GRPCServer.MustRun()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+	application.GRPCServer.Stop()
 }
 
 func setupLogger(env string) *slog.Logger {

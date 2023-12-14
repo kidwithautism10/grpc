@@ -10,7 +10,7 @@ import (
 
 type App struct {
 	log        *slog.Logger
-	gRPCServer *grpc.Server
+	GRPCServer *grpc.Server
 	port       int
 }
 
@@ -19,7 +19,13 @@ func New(log *slog.Logger, port int) *App {
 
 	authgrpc.Register(gRPCServer)
 
-	return &App{log: log, gRPCServer: gRPCServer, port: port}
+	return &App{log: log, GRPCServer: gRPCServer, port: port}
+}
+
+func (a *App) MustRun() {
+	if err := a.Run(); err != nil {
+		panic(err)
+	}
 }
 
 func (a *App) Run() error {
@@ -34,7 +40,7 @@ func (a *App) Run() error {
 
 	log.Info("grpc server is running", slog.String("addr", l.Addr().String()))
 
-	if err := a.gRPCServer.Serve(l); err != nil {
+	if err := a.GRPCServer.Serve(l); err != nil {
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
@@ -44,7 +50,7 @@ func (a *App) Run() error {
 func (a *App) Stop() {
 	const op = "grpcapp.stop"
 
-	a.log.With(slog.String("op", op)).Info("stopping grpc server", slog.Int("port", a.port))
+	a.log.With(slog.String("op", op)).Info("stopping grpc server")
 
-	a.gRPCServer.GracefulStop()
+	a.GRPCServer.GracefulStop()
 }
